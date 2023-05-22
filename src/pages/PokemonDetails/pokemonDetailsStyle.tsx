@@ -4,7 +4,7 @@ import styled from "styled-components"
 
 export const PokemonView = styled.div`
     max-width: 1200px;
-    margin: auto 3rem;
+    margin: 0 auto;
     border-radius: 15px;
     background: var(--secondary-color);
     padding: 3rem;
