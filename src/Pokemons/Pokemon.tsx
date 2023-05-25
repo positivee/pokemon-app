@@ -55,12 +55,7 @@ export default function Pokemon({ pokemon }: PokemonProps) {
           <MdOutlineFavoriteBorder />
         )}
       </FavouriesSVG>
-      <PokemonDetails
-        to={`/pokemon/${pokemon.name}`}
-        state={{ pokemon: pokemon }}
-      >
-        More info
-      </PokemonDetails>
+      <PokemonDetails to={`/pokemon/${pokemon.name}`}>More info</PokemonDetails>
     </Card>
   );
 }
