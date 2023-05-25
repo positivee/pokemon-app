@@ -1,19 +1,25 @@
-import  { useEffect, useState, useContext } from 'react'
-import {  useParams } from 'react-router-dom';
-import { PokemonView, BaseData, MoreData, Gallery, TwoColums, BackButton} from './pokemonDetailsStyle';
-import {MdOutlineFavorite, MdOutlineFavoriteBorder} from "react-icons/md"
-import LikedListContext from '../../LikedListContext';
-
+import { useEffect, useState, useContext } from "react";
+import { useParams } from "react-router-dom";
+import {
+  PokemonView,
+  BaseData,
+  LikedButton,
+  Gallery,
+  TwoColums,
+  BackButton,
+} from "./pokemonDetailsStyle";
+import { MdOutlineFavorite, MdOutlineFavoriteBorder } from "react-icons/md";
+import LikedListContext from "../../LikedListContext";
 
 interface Pokemon {
   abilities: {
-    ability:{
+    ability: {
       name: string;
-    }
+    };
   }[];
   base_experience: number;
   forms: {
-      name: string
+    name: string;
   }[];
   game_indices: {}[];
   height: number;
@@ -28,13 +34,13 @@ interface Pokemon {
   species: {}[];
   sprites: {
     front_default: string;
-    back_default: string
+    back_default: string;
   };
   stats: {
-      base_stat: number;
-      stat: {
-        name: string;
-      }
+    base_stat: number;
+    stat: {
+      name: string;
+    };
   }[];
   types: {
     slot: number;
@@ -46,85 +52,69 @@ interface Pokemon {
   weight: number;
 }
 
-
 function PokemonDetails() {
-    const {name } = useParams();
-    const [pokemonDetails, setPokemonDetails] = useState<Pokemon | null>(null);
-    const { likedList, updateLikedList }  = useContext(LikedListContext) || {};
- 
+  const { pokemonName = "" } = useParams();
 
+  const [pokemonDetails, setPokemonDetails] = useState<Pokemon | null>(null);
+  const { likedList, updateLikedList } = useContext(LikedListContext) || {};
 
-   useEffect(()=>{
-    fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)
+  useEffect(() => {
+    fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`)
       .then((response) => response.json())
       .then((data) => setPokemonDetails(data))
       .catch((err) => console.log(err));
-   },[])
+  }, [pokemonName]);
 
-
-   
   return (
-    
     <PokemonView>
-       <Gallery>
-      <img src={pokemonDetails?.sprites?.front_default} ></img>
-      <img src={pokemonDetails?.sprites?.back_default} ></img>
+      <Gallery>
+        <img src={pokemonDetails?.sprites?.front_default} alt="pokemon"></img>
+        <img src={pokemonDetails?.sprites?.back_default} alt="pokemon"></img>
       </Gallery>
       <TwoColums>
         <BaseData>
-    
-        <h3>Pokemon details: </h3>
-        <p>Name: {pokemonDetails?.name}</p>
-        <p>Base experience: {pokemonDetails?.base_experience}</p>
-        <p>Weight: {pokemonDetails?.weight} </p>
-        <p>Height: {pokemonDetails?.height} </p>
-        <h3>Abilites:</h3>
-        <ul>
-        { 
-        pokemonDetails?.abilities.map((ability,index) => {
-          return <li key={index}>{ability.ability.name}</li>
-        })
-        }
-        </ul>
-        <h3>Types:</h3>
-        <ul>
-        { 
-        pokemonDetails?.types.map((type, index) => {
-          return <li key={index}>{type.type.name}</li>
-        })
-        }
-        </ul>
+          <h3>Pokemon details: </h3>
+          <p>Name: {pokemonDetails?.name}</p>
+          <p>Base experience: {pokemonDetails?.base_experience}</p>
+          <p>Weight: {pokemonDetails?.weight} </p>
+          <p>Height: {pokemonDetails?.height} </p>
+          <h3>Abilites:</h3>
+          <ul>
+            {pokemonDetails?.abilities.map((ability, index) => {
+              return <li key={index}>{ability.ability.name}</li>;
+            })}
+          </ul>
+          <h3>Types:</h3>
+          <ul>
+            {pokemonDetails?.types.map((type, index) => {
+              return <li key={index}>{type.type.name}</li>;
+            })}
+          </ul>
         </BaseData>
-        <MoreData>
+        <BaseData>
           <h3>Base stats:</h3>
-          <div>
-            { 
-          pokemonDetails?.stats.map((stat,index) => {
-            return <li key={index}>{`${stat.stat.name.toUpperCase()} ${stat.base_stat}`} </li>
-          })
-          }
+          <ul>
+            {pokemonDetails?.stats.map((stat, index) => {
+              return (
+                <li key={index}>
+                  {`${stat.stat.name.toUpperCase()} ${stat.base_stat}`}{" "}
+                </li>
+              );
+            })}
+          </ul>
 
-          </div>
-
-          <div onClick={()=>updateLikedList(name)}>
-          {( 
-            likedList?.includes(name ?? '')) ? 
-            <MdOutlineFavorite/>
-             : 
-            <MdOutlineFavoriteBorder/> 
-          }
-          </div>
-
-         
-         
-        </MoreData>
+          <LikedButton onClick={() => updateLikedList?.(pokemonName)}>
+            {likedList?.includes(pokemonName ?? "") ? (
+              <MdOutlineFavorite />
+            ) : (
+              <MdOutlineFavoriteBorder />
+            )}
+          </LikedButton>
+        </BaseData>
       </TwoColums>
       <BackButton to="/">Back to pokemon list</BackButton>
     </PokemonView>
-    
-  )
+  );
 }
 
-export default PokemonDetails
-
-
+export default PokemonDetails;
