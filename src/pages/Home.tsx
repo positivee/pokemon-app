@@ -2,29 +2,12 @@ import React, { useEffect, useState, useMemo } from "react";
 import { SearchPanel, SearchInput, RightSide, LoadingInfo } from "../appStyle";
 import { Link } from "react-router-dom";
 import Pokemons from "../Pokemons/Pokemons";
+import { Pokemon, ResultsEntity } from "../intefaces/pokemonInterfaces";
 
 export default function Home() {
   const [findPokemon, setFindPokemon] = useState<string>("");
-  const [pokemons, setPokemons] = useState<PokemonData>([]);
+  const [pokemons, setPokemons] = useState<Pokemon[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  type PokemonData = {
-    name: string;
-    url: string;
-    types: {
-      slot: number;
-      type: {
-        name: string;
-        url: string;
-      };
-    }[];
-    img: string;
-  }[];
-
-  interface ResultsEntity {
-    name: string;
-    url: string;
-  }
 
   useEffect(() => {
     fetchAllPokemons();
@@ -38,18 +21,12 @@ export default function Home() {
           async (pokemon: ResultsEntity) => {
             return fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.name}`)
               .then((response) => response.json())
-              .then((data) => ({
-                name: pokemon.name,
-                url: pokemon.url,
-                types: data.types,
-                img: data.sprites.front_default,
-              }));
+              .then((data) => data);
           }
         );
-
         return Promise.all(pokemonTypesRequest);
       })
-      .then((responses: PokemonData) => {
+      .then((responses: Pokemon[]) => {
         setPokemons(responses);
         setIsLoading(false);
       })
@@ -58,7 +35,7 @@ export default function Home() {
       });
   };
 
-  const filteredPokemons: PokemonData = useMemo(() => {
+  const filteredPokemons: Pokemon[] = useMemo(() => {
     return pokemons.filter((pokemon) => {
       const searchedTermCombinations = [
         `${pokemon.name} ${pokemon.types[0].type.name}${

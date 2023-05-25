@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import {
   PokemonView,
   BaseData,
@@ -53,17 +53,21 @@ interface Pokemon {
 }
 
 function PokemonDetails() {
-  const { pokemonName = "" } = useParams();
+  const { name = "" } = useParams();
 
-  const [pokemonDetails, setPokemonDetails] = useState<Pokemon | null>(null);
+  const location = useLocation();
+
+  const [pokemonDetails, setPokemonDetails] = useState<Pokemon | null>(
+    location.state?.pokemon
+  );
   const { likedList, updateLikedList } = useContext(LikedListContext) || {};
 
   useEffect(() => {
-    fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`)
+    fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)
       .then((response) => response.json())
       .then((data) => setPokemonDetails(data))
       .catch((err) => console.log(err));
-  }, [pokemonName]);
+  }, [name]);
 
   return (
     <PokemonView>
@@ -103,8 +107,8 @@ function PokemonDetails() {
             })}
           </ul>
 
-          <LikedButton onClick={() => updateLikedList?.(pokemonName)}>
-            {likedList?.includes(pokemonName ?? "") ? (
+          <LikedButton onClick={() => updateLikedList?.(name)}>
+            {likedList?.includes(name ?? "") ? (
               <MdOutlineFavorite />
             ) : (
               <MdOutlineFavoriteBorder />
@@ -112,7 +116,9 @@ function PokemonDetails() {
           </LikedButton>
         </BaseData>
       </TwoColums>
-      <BackButton to="/">Back to pokemon list</BackButton>
+      <BackButton to="/" state={{ state: location.state?.pokemon }}>
+        Back to pokemon list
+      </BackButton>
     </PokemonView>
   );
 }
