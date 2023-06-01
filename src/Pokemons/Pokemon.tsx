@@ -9,23 +9,8 @@ import {
 } from "./pokemonStyle";
 import { MdOutlineFavorite, MdOutlineFavoriteBorder } from "react-icons/md";
 import LikedListContext from "../LikedListContext";
-
 import Icon from "./Icon";
-
-type PokemonProps = {
-  pokemon: {
-    name: string;
-    img: string;
-    url: string;
-    types: {
-      slot: number;
-      type: {
-        name: string;
-        url: string;
-      };
-    }[];
-  };
-};
+import { PokemonProps } from "../intefaces/pokemonInterfaces";
 
 export default function Pokemon({ pokemon }: PokemonProps) {
   const { likedList, updateLikedList } = useContext(LikedListContext) || {};
@@ -35,7 +20,7 @@ export default function Pokemon({ pokemon }: PokemonProps) {
 
   return (
     <Card>
-      <img src={pokemon.img} alt="pokemon"></img>
+      <img src={pokemon.sprites.front_default} alt="pokemon"></img>
       <TypesSVG>
         {pokemon.types.map((item, index) => (
           <Icon key={index} iconName={item.type.name} />
