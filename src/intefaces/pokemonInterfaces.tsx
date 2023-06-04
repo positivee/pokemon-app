@@ -44,6 +44,7 @@ export interface PokemonsProps {
 export interface PokemonProps {
   pokemon: Pokemon;
 }
+
 export interface ResultsEntity {
   name: string;
   url: string;

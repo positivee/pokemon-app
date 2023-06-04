@@ -1,9 +1,11 @@
-import React from "react";
 import Pokemon from "./Pokemon";
 import { Cards } from "./pokemonStyle";
-import { PokemonsProps } from "../intefaces/pokemonInterfaces";
 
-export default function Pokemons({ pokemons }: PokemonsProps) {
+import { useAppSelector } from "../store";
+
+export default function Pokemons() {
+  const pokemons = useAppSelector((state) => state.pokemons);
+
   return (
     <Cards>
       {pokemons.map((pokemon) => (

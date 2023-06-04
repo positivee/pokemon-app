@@ -11,46 +11,7 @@ import {
 import { MdOutlineFavorite, MdOutlineFavoriteBorder } from "react-icons/md";
 import LikedListContext from "../../LikedListContext";
 
-interface Pokemon {
-  abilities: {
-    ability: {
-      name: string;
-    };
-  }[];
-  base_experience: number;
-  forms: {
-    name: string;
-  }[];
-  game_indices: {}[];
-  height: number;
-  held_items: {}[];
-  id: number;
-  is_default: boolean;
-  location_area_encounters: string;
-  moves: {}[];
-  name: string;
-  order: number;
-  past_types: {}[];
-  species: {}[];
-  sprites: {
-    front_default: string;
-    back_default: string;
-  };
-  stats: {
-    base_stat: number;
-    stat: {
-      name: string;
-    };
-  }[];
-  types: {
-    slot: number;
-    type: {
-      name: string;
-      url: string;
-    };
-  }[];
-  weight: number;
-}
+import { Pokemon } from "../../intefaces/pokemonInterfaces";
 
 function PokemonDetails() {
   const { name = "" } = useParams();

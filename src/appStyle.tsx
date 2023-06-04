@@ -29,12 +29,6 @@ export const Panel = styled.div`
   }
 `;
 
-export const LoadingInfo = styled.h2`
-  display: grid;
-  place-items: center;
-  margin-top: 5rem;
-`;
-
 export const SearchInput = styled.input`
   display: block;
   padding: 1rem;

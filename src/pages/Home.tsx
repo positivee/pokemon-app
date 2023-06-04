@@ -1,25 +1,19 @@
 import React, { useEffect, useState, useMemo } from "react";
-import {
-  Panel,
-  SearchInput,
-  RightSide,
-  LoadingInfo,
-  PagerButton,
-} from "../appStyle";
+import { Panel, SearchInput, RightSide, PagerButton } from "../appStyle";
 import { Link } from "react-router-dom";
 import Pokemons from "../Pokemons/Pokemons";
-import { Pokemon, ResultsEntity } from "../intefaces/pokemonInterfaces";
+import { useDispatch } from "react-redux";
+import { addPokemons } from "../store/pokemon/pokemonSlice";
 
 export default function Home() {
   const baseFetchURL = "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=20";
   const [findPokemon, setFindPokemon] = useState<string>("");
-  const [pokemons, setPokemons] = useState<Pokemon[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [pager, setPager] = useState({
     next: null,
     previous: null,
     currentPager: 0,
   });
+  const dispatch = useDispatch();
 
   useEffect(() => {
     fetchAllPokemons(baseFetchURL);
@@ -36,23 +30,13 @@ export default function Home() {
           previous: data.previous,
           currentPager: getCurrentPage(url),
         });
-        const pokemonTypesRequest = data.results.map(
-          async (pokemon: ResultsEntity) => {
-            return fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.name}`)
-              .then((response) => response.json())
-              .then((data) => data);
-          }
-        );
-        return Promise.all(pokemonTypesRequest);
-      })
-      .then((responses: Pokemon[]) => {
-        setPokemons(responses);
-        setIsLoading(false);
+        dispatch(addPokemons(data.results));
       })
       .catch((err) => {
         console.log(err.message);
       });
   };
+
   const getCurrentPage = (url: string): number => {
     const pageOffsetParam: string | null = new URLSearchParams(
       url.split("?")[1]
@@ -93,7 +77,6 @@ export default function Home() {
           disabled
         />
         <RightSide>
-          <div>Number of pokemons: {pokemons.length}</div>
           <Link to="/liked-pokemons">Your liked pokemons </Link>
         </RightSide>
       </Panel>
@@ -114,13 +97,11 @@ export default function Home() {
           Next
         </PagerButton>
       </Panel>
-      {isLoading && <LoadingInfo>Loading pokemon list...</LoadingInfo>}
       {findPokemon.length > 0 ? (
         <>{/* <Pokemons pokemons={filteredPokemons} /> */}</>
       ) : (
-        <Pokemons pokemons={pokemons} />
+        <Pokemons />
       )}
-      =
     </div>
   );
 }
