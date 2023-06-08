@@ -10,37 +10,40 @@ import {
 import { MdOutlineFavorite, MdOutlineFavoriteBorder } from "react-icons/md";
 import LikedListContext from "../LikedListContext";
 import Icon from "./Icon";
-import { PokemonProps } from "../intefaces/pokemonInterfaces";
+import { useGetPokemonDetailsQuery } from "../store";
 
-export default function Pokemon({ pokemon }: PokemonProps) {
+export default function Pokemon({ name }: { name: string }) {
   const { likedList, updateLikedList } = useContext(LikedListContext) || {};
+
+  const { data: pokemon } = useGetPokemonDetailsQuery(name);
+
   const handleClick = () => {
-    updateLikedList?.(pokemon.name);
+    updateLikedList?.(name);
   };
 
   return (
     <Card>
-      <img src={pokemon.sprites.front_default} alt="pokemon"></img>
+      <img src={pokemon?.sprites?.front_default} alt="pokemon"></img>
       <TypesSVG>
-        {pokemon.types.map((item, index) => (
-          <Icon key={index} iconName={item.type.name} />
+        {pokemon?.types?.map((item, index) => (
+          <Icon key={index} iconName={item?.type?.name} />
         ))}
       </TypesSVG>
-      <PokemonName>{pokemon.name}</PokemonName>
-      <Types>{pokemon.types.map((item) => item.type.name + " ")}</Types>
+      <PokemonName>{name}</PokemonName>
+      <Types>{pokemon?.types.map((item) => item?.type?.name + " ")}</Types>
 
       <FavouriesSVG
         onClick={() => {
           handleClick();
         }}
       >
-        {likedList?.includes(pokemon.name) ? (
+        {likedList?.includes(name) ? (
           <MdOutlineFavorite />
         ) : (
           <MdOutlineFavoriteBorder />
         )}
       </FavouriesSVG>
-      <PokemonDetails to={`/pokemon/${pokemon.name}`}>More info</PokemonDetails>
+      <PokemonDetails to={`/pokemon/${name}`}>More info</PokemonDetails>
     </Card>
   );
 }

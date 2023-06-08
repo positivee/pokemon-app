@@ -1,4 +1,4 @@
-export interface Pokemon {
+export interface PokemonInterface {
   abilities: {
     ability: {
       name: string;
@@ -38,13 +38,17 @@ export interface Pokemon {
   }[];
   weight: number;
 }
-export interface PokemonsProps {
-  pokemons: Pokemon[];
-}
-export interface PokemonProps {
-  pokemon: Pokemon;
+
+export interface PokemonFetched {
+  count: number;
+  next: string;
+  previous?: null;
+  results?: ResultsEntity[] | null;
 }
 export interface ResultsEntity {
   name: string;
   url: string;
+}
+export interface PokemonsProps {
+  pokemons: ResultsEntity[];
 }

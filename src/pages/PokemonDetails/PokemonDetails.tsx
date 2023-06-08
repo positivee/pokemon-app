@@ -1,5 +1,5 @@
-import { useEffect, useState, useContext } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useContext } from "react";
+import { useParams } from "react-router-dom";
 import {
   PokemonView,
   BaseData,
@@ -10,64 +10,13 @@ import {
 } from "./pokemonDetailsStyle";
 import { MdOutlineFavorite, MdOutlineFavoriteBorder } from "react-icons/md";
 import LikedListContext from "../../LikedListContext";
-
-interface Pokemon {
-  abilities: {
-    ability: {
-      name: string;
-    };
-  }[];
-  base_experience: number;
-  forms: {
-    name: string;
-  }[];
-  game_indices: {}[];
-  height: number;
-  held_items: {}[];
-  id: number;
-  is_default: boolean;
-  location_area_encounters: string;
-  moves: {}[];
-  name: string;
-  order: number;
-  past_types: {}[];
-  species: {}[];
-  sprites: {
-    front_default: string;
-    back_default: string;
-  };
-  stats: {
-    base_stat: number;
-    stat: {
-      name: string;
-    };
-  }[];
-  types: {
-    slot: number;
-    type: {
-      name: string;
-      url: string;
-    };
-  }[];
-  weight: number;
-}
+import { useGetPokemonDetailsQuery } from "../../store";
 
 function PokemonDetails() {
   const { name = "" } = useParams();
 
-  const location = useLocation();
-
-  const [pokemonDetails, setPokemonDetails] = useState<Pokemon | null>(
-    location.state?.pokemon
-  );
   const { likedList, updateLikedList } = useContext(LikedListContext) || {};
-
-  useEffect(() => {
-    fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)
-      .then((response) => response.json())
-      .then((data) => setPokemonDetails(data))
-      .catch((err) => console.log(err));
-  }, [name]);
+  const { data: pokemonDetails } = useGetPokemonDetailsQuery(name);
 
   return (
     <PokemonView>
@@ -116,9 +65,7 @@ function PokemonDetails() {
           </LikedButton>
         </BaseData>
       </TwoColums>
-      <BackButton to="/" state={{ state: location.state?.pokemon }}>
-        Back to pokemon list
-      </BackButton>
+      <BackButton to="/">Back to pokemon list</BackButton>
     </PokemonView>
   );
 }

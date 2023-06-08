@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Panel,
   SearchInput,
@@ -8,57 +8,19 @@ import {
 } from "../appStyle";
 import { Link } from "react-router-dom";
 import Pokemons from "../Pokemons/Pokemons";
-import { Pokemon, ResultsEntity } from "../intefaces/pokemonInterfaces";
+import { useGetAllPokemonsQuery } from "../store";
 
 export default function Home() {
-  const baseFetchURL = "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=20";
   const [findPokemon, setFindPokemon] = useState<string>("");
-  const [pokemons, setPokemons] = useState<Pokemon[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [pager, setPager] = useState({
-    next: null,
-    previous: null,
-    currentPager: 0,
-  });
 
-  useEffect(() => {
-    fetchAllPokemons(baseFetchURL);
-  }, []);
+  const [pager, setPager] = useState(0);
+  const { data, isLoading } = useGetAllPokemonsQuery(pager * 20) || {};
+  const { count = 0, next = null, previous = null } = data || {};
 
-  const fetchAllPokemons = (url: string | null) => {
-    if (url == null) return;
+  const getUrlOffset = (url: string): number => {
+    const offset = new URLSearchParams(url.split("?")[1]).get("offset");
 
-    fetch(`${url.split("&")[0]}&limit=20`)
-      .then((response) => response.json())
-      .then((data) => {
-        setPager({
-          next: data.next,
-          previous: data.previous,
-          currentPager: getCurrentPage(url),
-        });
-        const pokemonTypesRequest = data.results.map(
-          async (pokemon: ResultsEntity) => {
-            return fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.name}`)
-              .then((response) => response.json())
-              .then((data) => data);
-          }
-        );
-        return Promise.all(pokemonTypesRequest);
-      })
-      .then((responses: Pokemon[]) => {
-        setPokemons(responses);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
-  };
-  const getCurrentPage = (url: string): number => {
-    const pageOffsetParam: string | null = new URLSearchParams(
-      url.split("?")[1]
-    ).get("offset");
-
-    return pageOffsetParam !== null ? parseInt(pageOffsetParam) / 20 + 1 : 0;
+    return offset !== null ? parseInt(offset) : 20;
   };
 
   // const filteredPokemons: Pokemon[] = useMemo(() => {
@@ -77,10 +39,14 @@ export default function Home() {
   //   });
   // }, [findPokemon, pokemons]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFindPokemon(e.target.value);
-  };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {};
 
+  const handlePage = (page: string | null) => {
+    if (page === null) return;
+    const nextPage = getUrlOffset(page) / 20;
+
+    setPager(nextPage);
+  };
   return (
     <div>
       <Panel>
@@ -93,22 +59,22 @@ export default function Home() {
           disabled
         />
         <RightSide>
-          <div>Number of pokemons: {pokemons.length}</div>
+          <div>Number of pokemons: {count}</div>
           <Link to="/liked-pokemons">Your liked pokemons </Link>
         </RightSide>
       </Panel>
       <Panel>
         <PagerButton
           onClick={() => {
-            fetchAllPokemons(pager.previous);
+            handlePage(previous);
           }}
         >
           Prev
         </PagerButton>
-        <div>Current page: {pager.currentPager}</div>
+        <div>Current page: {pager}</div>
         <PagerButton
           onClick={() => {
-            fetchAllPokemons(pager.next);
+            handlePage(next);
           }}
         >
           Next
@@ -118,9 +84,11 @@ export default function Home() {
       {findPokemon.length > 0 ? (
         <>{/* <Pokemons pokemons={filteredPokemons} /> */}</>
       ) : (
-        <Pokemons pokemons={pokemons} />
+        // <Pokemons pokemons={data?.results} />
+        <></>
       )}
-      =
+
+      {data?.results && <Pokemons pokemons={data.results} />}
     </div>
   );
 }
