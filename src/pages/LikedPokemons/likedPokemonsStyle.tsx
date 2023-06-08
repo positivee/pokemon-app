@@ -26,6 +26,7 @@ export const ListItem = styled.div`
   padding: 2rem;
   font-size: 1.5rem;
   border-top: 1px solid black;
+  text-transform: capitalize;
 
   svg {
     cursor: pointer;

@@ -1,4 +1,3 @@
-import { useContext } from "react";
 import { useParams } from "react-router-dom";
 import {
   PokemonView,
@@ -9,13 +8,14 @@ import {
   BackButton,
 } from "./pokemonDetailsStyle";
 import { MdOutlineFavorite, MdOutlineFavoriteBorder } from "react-icons/md";
-import LikedListContext from "../../LikedListContext";
-import { useGetPokemonDetailsQuery } from "../../store";
+import { useGetPokemonDetailsQuery } from "../../store/pokemon/pokemonApi";
+import { useAppDispatch, useAppSelector } from "../../store";
+import { toggleLikedPokemon } from "../../store/pokemon/likedPokemonsSlice";
 
 function PokemonDetails() {
   const { name = "" } = useParams();
-
-  const { likedList, updateLikedList } = useContext(LikedListContext) || {};
+  const likedPokemonList = useAppSelector((state) => state.likedPokemons);
+  const dispatch = useAppDispatch();
   const { data: pokemonDetails } = useGetPokemonDetailsQuery(name);
 
   return (
@@ -56,8 +56,8 @@ function PokemonDetails() {
             })}
           </ul>
 
-          <LikedButton onClick={() => updateLikedList?.(name)}>
-            {likedList?.includes(name ?? "") ? (
+          <LikedButton onClick={() => dispatch(toggleLikedPokemon(name))}>
+            {likedPokemonList?.includes(name ?? "") ? (
               <MdOutlineFavorite />
             ) : (
               <MdOutlineFavoriteBorder />

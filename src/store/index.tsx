@@ -1,21 +1,41 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import { setupListeners } from "@reduxjs/toolkit/query";
+import { useDispatch, useSelector } from "react-redux";
+import type { TypedUseSelectorHook } from "react-redux";
+import { pokemonApi } from "./pokemon/pokemonApi";
+import likedPokemonsReducer from "../store/pokemon/likedPokemonsSlice";
+import { persistReducer, persistStore } from "redux-persist";
+import storage from "redux-persist/lib/storage";
 
-import {
-  PokemonFetched,
-  PokemonInterface,
-} from "../intefaces/pokemonInterfaces";
+const persistConfig = {
+  key: "root",
+  storage,
+  blacklist: [pokemonApi.reducerPath],
+};
 
-export const pokemonApi = createApi({
-  reducerPath: "pokemonApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "https://pokeapi.co/api/v2/" }),
-  endpoints: (builder) => ({
-    getAllPokemons: builder.query<PokemonFetched, number>({
-      query: (offset) => `/pokemon/?&offset=${offset}=&limit=20`,
-    }),
-    getPokemonDetails: builder.query<PokemonInterface, string>({
-      query: (name) => `/pokemon/${name}`,
-    }),
-  }),
+const rootReducer = combineReducers({
+  likedPokemons: likedPokemonsReducer,
+  [pokemonApi.reducerPath]: pokemonApi.reducer,
 });
 
-export const { useGetAllPokemonsQuery, useGetPokemonDetailsQuery } = pokemonApi;
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+export const store = configureStore({
+  reducer: persistedReducer,
+  // Adding the api middleware enables caching, invalidation, polling, and other useful features of `rtk-query`.
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(pokemonApi.middleware),
+});
+
+setupListeners(store.dispatch);
+
+export const persistor = persistStore(store);
+
+// Infer the `RootState` and `AppDispatch` types from the store itself
+export type RootState = ReturnType<typeof store.getState>;
+// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
+export type AppDispatch = typeof store.dispatch;
+// Use throughout your app instead of plain `useDispatch` and `useSelector`
+type DispatchFunc = () => AppDispatch;
+export const useAppDispatch: DispatchFunc = useDispatch;
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;

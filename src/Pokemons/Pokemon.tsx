@@ -1,4 +1,3 @@
-import { useContext } from "react";
 import {
   Card,
   PokemonName,
@@ -8,18 +7,16 @@ import {
   PokemonDetails,
 } from "./pokemonStyle";
 import { MdOutlineFavorite, MdOutlineFavoriteBorder } from "react-icons/md";
-import LikedListContext from "../LikedListContext";
 import Icon from "./Icon";
-import { useGetPokemonDetailsQuery } from "../store";
+import { useGetPokemonDetailsQuery } from "../store/pokemon/pokemonApi";
+import { useAppDispatch, useAppSelector } from "../store";
+import { toggleLikedPokemon } from "../store/pokemon/likedPokemonsSlice";
 
 export default function Pokemon({ name }: { name: string }) {
-  const { likedList, updateLikedList } = useContext(LikedListContext) || {};
+  const likedPokemonList = useAppSelector((state) => state.likedPokemons);
+  const dispatch = useAppDispatch();
 
   const { data: pokemon } = useGetPokemonDetailsQuery(name);
-
-  const handleClick = () => {
-    updateLikedList?.(name);
-  };
 
   return (
     <Card>
@@ -34,10 +31,10 @@ export default function Pokemon({ name }: { name: string }) {
 
       <FavouriesSVG
         onClick={() => {
-          handleClick();
+          dispatch(toggleLikedPokemon(name));
         }}
       >
-        {likedList?.includes(name) ? (
+        {likedPokemonList?.includes(name ?? "") ? (
           <MdOutlineFavorite />
         ) : (
           <MdOutlineFavoriteBorder />

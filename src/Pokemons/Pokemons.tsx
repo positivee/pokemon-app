@@ -1,4 +1,3 @@
-import React from "react";
 import Pokemon from "./Pokemon";
 import { Cards } from "./pokemonStyle";
 import { PokemonsProps } from "../intefaces/pokemonInterfaces";

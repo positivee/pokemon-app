@@ -1,21 +1,24 @@
-import React, { useContext } from "react";
-import LikedListContext from "../../LikedListContext";
 import { CgPlayListRemove } from "react-icons/cg";
 import { ListItem, List } from "./likedPokemonsStyle";
+import { useAppSelector, useAppDispatch } from "../../store";
+import { toggleLikedPokemon } from "../../store/pokemon/likedPokemonsSlice";
 
 export default function LikedPokemons() {
-  const { likedList, updateLikedList } = useContext(LikedListContext) || {};
+  const dispatch = useAppDispatch();
+  const liked: string[] = useAppSelector((state) => state.likedPokemons);
 
   return (
     <List>
       <h1>Your bloved pokemon collection:</h1>
-      {likedList?.length === 0 ? (
+      {liked?.length === 0 ? (
         <h2>No pokemons liked</h2>
       ) : (
-        likedList?.map((likedPokemon) => (
+        liked?.map((likedPokemon) => (
           <ListItem key={likedPokemon}>
             {likedPokemon}
-            <CgPlayListRemove onClick={() => updateLikedList?.(likedPokemon)} />
+            <CgPlayListRemove
+              onClick={() => dispatch(toggleLikedPokemon(likedPokemon))}
+            />
           </ListItem>
         ))
       )}

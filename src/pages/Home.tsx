@@ -8,7 +8,7 @@ import {
 } from "../appStyle";
 import { Link } from "react-router-dom";
 import Pokemons from "../Pokemons/Pokemons";
-import { useGetAllPokemonsQuery } from "../store";
+import { useGetAllPokemonsQuery } from "../store/pokemon/pokemonApi";
 
 export default function Home() {
   const [findPokemon, setFindPokemon] = useState<string>("");
