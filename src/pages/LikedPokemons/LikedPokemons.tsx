@@ -1,10 +1,8 @@
-import { CgPlayListRemove } from "react-icons/cg";
-import { ListItem, List } from "./likedPokemonsStyle";
-import { useAppSelector, useAppDispatch } from "../../store";
-import { toggleLikedPokemon } from "../../store/pokemon/likedPokemonsSlice";
+import { List } from "./likedPokemonsStyle";
+import { useAppSelector } from "../../store";
+import Pokemon from "../../Pokemons/Pokemon";
 
 export default function LikedPokemons() {
-  const dispatch = useAppDispatch();
   const liked: string[] = useAppSelector((state) => state.likedPokemons);
 
   return (
@@ -14,12 +12,11 @@ export default function LikedPokemons() {
         <h2>No pokemons liked</h2>
       ) : (
         liked?.map((likedPokemon) => (
-          <ListItem key={likedPokemon}>
-            {likedPokemon}
-            <CgPlayListRemove
-              onClick={() => dispatch(toggleLikedPokemon(likedPokemon))}
-            />
-          </ListItem>
+          <Pokemon
+            key={likedPokemon}
+            name={likedPokemon}
+            variant="horizontal"
+          />
         ))
       )}
     </List>

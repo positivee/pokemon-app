@@ -21,13 +21,43 @@ export const Cards = styled.div`
     margin: 4rem auto;
   }
 `;
+interface CardProps {
+  variant?: "vertical" | "horizontal";
+}
+export const Card = styled.div<CardProps>`
+  ${(props) =>
+    props.variant === "vertical" &&
+    `
+    display: grid;
+    place-items: center;
+    padding: 3rem 5rem;
+    border-radius: 15px;
 
-export const Card = styled.div`
-  display: grid;
-  place-items: center;
+  `}
 
-  border-radius: 15px;
-  padding: 3rem 5rem;
+  ${(props) =>
+    props.variant === "horizontal" &&
+    `
+    width:100%;
+    display: grid;
+    place-items: center;
+    padding: 2rem 0rem;
+    border-top: 1px solid black;
+    
+    @media (min-width: 45rem) {
+      
+    
+      display: flex;
+       gap:1rem;
+       justify-content:space-evenly;
+    align-items: center; 
+    border-bottom:1rem;
+   
+  }
+    `}
+  
+ 
+
   background: var(--secondary-color);
   color: var(--pri-font);
 `;
@@ -50,13 +80,14 @@ export const Types = styled.div`
 export const PokemonDetails = styled(Link)`
   background: var(--backgroud-color);
   color: var(--secondary-color);
-  margin-top: 2rem;
   padding: 0.5rem 2rem;
   border-radius: 15px;
   cursor: pointer;
 `;
 export const FavouriesSVG = styled.div`
-  margin-top: 1rem;
+  display: grid;
+  place-items: center;
+  margin: 1rem 0;
   font-size: 2rem;
   cursor: pointer;
 `;

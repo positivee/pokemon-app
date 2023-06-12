@@ -4,13 +4,22 @@ import { useDispatch, useSelector } from "react-redux";
 import type { TypedUseSelectorHook } from "react-redux";
 import { pokemonApi } from "./pokemon/pokemonApi";
 import likedPokemonsReducer from "../store/pokemon/likedPokemonsSlice";
-import { persistReducer, persistStore } from "redux-persist";
+import {
+  persistReducer,
+  persistStore,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
 const persistConfig = {
   key: "root",
   storage,
-  blacklist: [pokemonApi.reducerPath],
+  whitelist: ["likedPokemons"],
 };
 
 const rootReducer = combineReducers({
@@ -24,7 +33,11 @@ export const store = configureStore({
   reducer: persistedReducer,
   // Adding the api middleware enables caching, invalidation, polling, and other useful features of `rtk-query`.
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(pokemonApi.middleware),
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }).concat(pokemonApi.middleware),
 });
 
 setupListeners(store.dispatch);

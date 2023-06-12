@@ -6,7 +6,7 @@ export default function Pokemons({ pokemons }: PokemonsProps) {
   return (
     <Cards>
       {pokemons.map((pokemon) => (
-        <Pokemon key={pokemon.name} name={pokemon.name} />
+        <Pokemon key={pokemon.name} name={pokemon.name} variant="vertical" />
       ))}
     </Cards>
   );

@@ -5,8 +5,10 @@ const likedPokemonsSlice = createSlice({
   initialState: [] as string[],
   reducers: {
     toggleLikedPokemon: (state, action) => {
-      if (!state.includes(action.payload)) return [...state, action.payload];
-      else return state.filter((name) => name !== action.payload);
+      if (!state.includes(action.payload)) state.push(action.payload);
+      else {
+        return state.filter((name) => name !== action.payload);
+      }
     },
   },
 });

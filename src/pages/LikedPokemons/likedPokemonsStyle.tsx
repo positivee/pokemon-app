@@ -18,18 +18,3 @@ export const List = styled.div`
     margin: auto;
   }
 `;
-
-export const ListItem = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  padding: 2rem;
-  font-size: 1.5rem;
-  border-top: 1px solid black;
-  text-transform: capitalize;
-
-  svg {
-    cursor: pointer;
-    font-size: 2rem;
-  }
-`;
